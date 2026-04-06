@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package policy;
+
+service PolicyService {
+    rpc CheckAccess (AccessRequest) returns (AccessResponse);
+    rpc IssueToken (TokenRequest) returns (TokenResponse);
+}
+
+message AccessRequest {
+    string user_id = 1;
+    string resource = 2;
+    string action = 3;
+}
+
+
+message AccessResponse {
+    bool allowed = 1 ;
+    string reason = 2;
+}
+
+
+message TokenRequest {
+    string user_id = 1;
+}
+
+
+message TokenResponse {
+    string token = 1;
+}

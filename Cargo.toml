@@ -1,0 +1,6 @@
+[workspace]
+members = [
+    "proto",
+    "control-plane",
+]
+resolver = "2"

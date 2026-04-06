@@ -1,0 +1,15 @@
+[package]
+name = "control-plane"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+proto = {path = "../proto"}
+tonic = "0.12"
+tokio = {version = "1", features = ["full"]}
+dashmap = "6"
+jsonwebtoken = "9"
+tracing = "0.1"
+tracing-subscriber = {version = "0.3", features = ["env-filter"]}
+clap = {version = "4", features = ["derive"]}
+serde = {version = "1", features = ["derive"]}
