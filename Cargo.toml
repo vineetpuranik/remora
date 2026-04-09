@@ -3,5 +3,6 @@ members = [
     "proto",
     "control-plane",
     "client",
+    "proxy",
 ]
 resolver = "2"
