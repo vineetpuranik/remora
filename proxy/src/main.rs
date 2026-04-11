@@ -7,13 +7,11 @@
 // Each connection gets its own tokio::spawn task so, accepts are non blocking
 
 use clap::Parser;
-use proto::policy::{
-    policy_service_client::PolicyServiceClient, 
-    AccessRequest, TokenRequest};
+use proto::policy::{policy_service_client::PolicyServiceClient, AccessRequest, TokenRequest};
 use std::net::SocketAddr;
+use std::sync::Arc;
 use tokio::net::{TcpListener, TcpStream};
 use tracing::{info, warn};
-use std::sync::Arc;
 
 #[derive(Parser)]
 struct Args {
@@ -42,16 +40,18 @@ async fn main() {
     // get the token for the user
     let token = {
         let mut cp = PolicyServiceClient::connect(format!("http://{}", args.control_plane))
+            .await
+            .unwrap_or_else(|err| {
+                eprintln!("ERROR : could not connect to control plane {err}");
+                std::process::exit(1);
+            });
+        cp.issue_token(TokenRequest {
+            user_id: args.user.clone(),
+        })
         .await
         .unwrap_or_else(|err| {
             eprintln!("ERROR : could not connect to control plane {err}");
             std::process::exit(1);
-        });
-        cp.issue_token(TokenRequest {user_id : args.user.clone()})
-        .await
-        .unwrap_or_else(|err| {
-            eprintln!("ERROR : could not connect to control plane {err}");
-            std::process::exit(1);            
         })
         .into_inner()
         .token
