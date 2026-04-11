@@ -35,7 +35,7 @@ struct Args {
 
 #[tokio::main]
 async fn main() {
-    tracing_subscriber::fmt::init();
+    console_subscriber::init();
 
     let args = Args::parse();
 
@@ -66,7 +66,7 @@ async fn main() {
     info!("Proxy listening on {}", args.listen);
 
     loop {
-        let (client_conn, peer_addr) = listener.accept().await.unwrap_or_else(|err| {
+        let (client_conn, _) = listener.accept().await.unwrap_or_else(|err| {
             eprintln!("ERROR: Failed to accept connection: {err}");
             std::process::exit(1);
         });
@@ -83,6 +83,7 @@ async fn main() {
     }
 }
 
+#[tracing::instrument(skip(client_conn))]
 async fn handle_connection(
     mut client_conn: TcpStream,
     backend: String,
